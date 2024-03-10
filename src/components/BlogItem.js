@@ -8,18 +8,22 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { login } from "../config/login";
 
-const BlogItem = ({ blog: {
-  description,
-  title,
-  createdAt,
-  authorName,
-  authorAvatar,
-  cover,
-  category,
-  id,
-  likes,
-  comments,
-}, blogs, setBlogs }) => {
+const BlogItem = ({
+  blog: {
+    description,
+    title,
+    createdAt,
+    authorName,
+    authorAvatar,
+    cover,
+    category,
+    id,
+    likes,
+    comments,
+  },
+  blogs,
+  setBlogs,
+}) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -33,10 +37,10 @@ const BlogItem = ({ blog: {
   };
 
   const [comment, setComment] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(comment===''){
+    if (comment === "") {
       return;
     }
     const okay = {
@@ -49,22 +53,25 @@ const BlogItem = ({ blog: {
       category,
       id,
       likes,
-      comments: [...comments, { user: Number(localStorage.getItem('userid')), comment }],
+      comments: [
+        ...comments,
+        { user: Number(localStorage.getItem("userid")), comment },
+      ],
     };
     const old = blogs.filter((blo) => blo.id !== okay.id);
     setBlogs([okay, ...old]);
-    const subCategory = category.split(' ');
+    const subCategory = category.split(" ");
     setComment("");
-    navigate(`/${subCategory[0].toLowerCase()}`)
+    navigate(`/${subCategory[0].toLowerCase()}`);
   };
-  
+
   useEffect(() => {
-    navigate('/');
-    handleClose()
+    navigate("/");
+    handleClose();
     // setBlogs(blogs);
     // eslint-disable-next-line
   }, [blogs]);
-  
+
   return (
     <div className="p-4 md:w-1/3">
       <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
@@ -140,72 +147,67 @@ const BlogItem = ({ blog: {
         </div>
       </div>
       <Dialog
-          fullScreen={fullScreen}
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="responsive-dialog-title"
-          fullWidth
-        >
-          <DialogTitle id="responsive-dialog-title">
-            Comments section
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <div className="comments">
-                {comments.length > 0 &&
-                  comments.map((comment, index) => (
-                    // <div key={index}>{comment.user} {comment.comment}</div>
-                    <div key={index} className="d-flex">
-                      <img
-                        src={require("../assets/author.jpg")}
-                        alt="author"
-                        style={{
-                          width: 50,
-                          height: 50,
-                          borderRadius: "50%",
-                          marginRight: 10,
-                          marginBottom: 10,
-                        }}
-                      />
-                      <div className="text-black">
-                        <b>
-                          {login.length > 0 &&
-                            login.filter((user) => user.id === comment.user)[0]
-                              .name}
-                        </b>
-                        <br />
-                        {comment.comment}
-                      </div>
+        fullScreen={fullScreen}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+        fullWidth
+      >
+        <DialogTitle id="responsive-dialog-title">Comments</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <div className="comments">
+              {comments.length > 0 &&
+                comments.map((comment, index) => (
+                  // <div key={index}>{comment.user} {comment.comment}</div>
+                  <div key={index} className="d-flex">
+                    <img
+                      src={require("../assets/author.jpg")}
+                      alt="author"
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: "50%",
+                        marginRight: 10,
+                        marginBottom: 10,
+                      }}
+                    />
+                    <div className="text-black">
+                      <b>
+                        {login.length > 0 &&
+                          login.filter((user) => user.id === comment.user)[0]
+                            .name}
+                      </b>
+                      <br />
+                      {comment.comment}
                     </div>
-                  ))}
-                <form
-                  onSubmit={handleSubmit}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end",
-                    width: "100%",
-                    position: "relative",
-                  }}
-                >
-                  <input
-                    placeholder="Comment"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="comment-input"
-                  />
-                  <button
-                    className="btn btn-primary my-2 w-auto position-absolute"
-                    style={{ right: "2%", top: "-3%" }}
-                    type="submit"
-                  >
-                    Post
-                  </button>
-                </form>
-              </div>
-            </DialogContentText>
-          </DialogContent>
-        </Dialog>
+                  </div>
+                ))}
+              <form
+                onSubmit={handleSubmit}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
+                <textarea
+                  placeholder="Comment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  className="comment-input"
+                  rows={4}
+                />
+                <button className="btn btn-primary my-2 w-auto" type="submit">
+                  Post
+                </button>
+              </form>
+            </div>
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

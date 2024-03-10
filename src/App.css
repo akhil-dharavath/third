@@ -28,9 +28,7 @@ header a,
   padding-right: 80px !important;
   width: 100%;
   border: 2px solid black !important;
-  font-size: 20px !important;
-  transition: all 0.3s linear;
-  border-radius: 15px;
+  border-radius: 7px;
 }
 .comments .btn-primary{
   color: #0a58ca;

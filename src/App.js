@@ -169,7 +169,7 @@ function App() {
           path="/blog/:id"
           element={<Blog blogs={blogsList} setBlogs={setBlogsList} />}
         />
-        <Route exact path="/path-not-found" element={<PageNotFound />} />
+        <Route exact path="*" element={<PageNotFound />} />
         <Route exact path="/login" element={<Login disabledAccts={disabledAccts} />} />
         <Route exact path="/register" element={<Register />} />
       </Routes>

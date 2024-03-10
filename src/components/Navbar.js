@@ -129,7 +129,7 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
             to={"/"}
             className="flex title-font font-medium items-center text-gray-900 mb-0 md:mb-0"
           >
-            <span className="ml-3 text-xl">Tailblocks</span>
+            <span className="ml-3 text-xl">Blogs</span>
           </Link>
           <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-gray-400	flex flex-wrap items-center text-base justify-center">
             {sections.map((section) => (
@@ -224,6 +224,7 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
               name="title"
               onChange={(e) => handleChange(e)}
               required
+              size="small"
             />
             <TextField
               className={"my-2"}
@@ -234,6 +235,7 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
               name="description"
               onChange={(e) => handleChange(e)}
               required
+              size="small"
             />
             <TextField
               className={"my-2"}
@@ -255,6 +257,7 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
                 name="category"
                 value={addPost.category}
                 onChange={(e) => handleChange(e)}
+                size="small"
               >
                 <MenuItem value="Academic">Academic</MenuItem>
                 <MenuItem value="Career">Career</MenuItem>
@@ -280,6 +283,7 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
               name="authorName"
               onChange={(e) => handleChange(e)}
               required
+              size="small"
             />
             <TextField
               className={"my-2"}
@@ -290,6 +294,7 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
               name="cover"
               onChange={(e) => handleChange(e)}
               required
+              size="small"
             />
           </DialogContent>
           <DialogActions>
