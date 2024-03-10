@@ -1,38 +1,125 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* background-color: black; */
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+header a,
+.p-6 h2,
+.p-6 h1,
+.p-6 p,
+.p-6 span,
+.blog-post h2,
+.blog-post p,
+.blog-post span,
+.blog-post a {
+  color: rgba(255, 255, 255, 0.818) !important;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.blog-post .rounded {
+  background-color: rgb(99 102 241 / var(--tw-text-opacity));
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.MuiPaper-root{
+  background-color: white;
+}
+.comment-input{
+  background-color: #f3f2f2 !important;
+  border: none !important;
+  padding: 8px 10px;
+  padding-right: 80px !important;
+  width: 100%;
+  border: 2px solid black !important;
+  font-size: 20px !important;
+  transition: all 0.3s linear;
+  border-radius: 15px;
+}
+.comments .btn-primary{
+  color: #0a58ca;
+}
+.comments .btn-primary:hover{
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+header a:hover {
+  color: white !important;
+}
+.dropdown-menu {
+  background-color: white;
+}
+.dropdown-menu.show {
+  background-color: white;
+}
+.dropdown-divider {
+  background-color: white;
+}
+.dropdown-item {
+  background-color: white;
+  color: black !important;
+}
+.dropdown-item:hover {
+  background-color: rgb(99 102 241 / var(--tw-text-opacity));
+}
+i {
+  cursor: pointer;
+}
+.logout {
+  position: relative;
+  float: right;
+  margin-bottom: 10px;
+  width: 85px;
+  background-color: black;
+  color: white;
+  font-size: 17px;
+  border: 0px;
+  border-radius: 6px;
+  padding: 2px 5px;
+}
+.logSign {
+  width: 500px;
+  min-width: 280px;
+  border: 1px solid lightgray;
+  padding: 50px;
+  border-radius: 10px;
+  margin-top: 70px;
+}
+.login {
+  width: 180px;
+  margin-left: 5px;
+}
+.signup {
+  width: 180px;
+  margin-left: 25px;
+}
+.logSign h1 {
+  text-align: center;
+}
+.logSign label {
+  font-size: 20px;
+  margin-bottom: -10px !important;
+}
+.btn-success {
+  color: #157347;
+}
+@media (max-width: 550px) {
+  .buttonContainer {
+    display: flex;
+    flex-direction: column;
+  }
+  .logSign {
+    width: 100%;
+    padding: 10px;
+  }
+  .login {
+    width: 80%;
+    margin: auto;
+  }
+  .signup {
+    width: 80%;
+    margin: auto;
+  }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.blog-post {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
