@@ -105,7 +105,7 @@ const Blog = ({ blogsList: blogs, setBlogs }) => {
           className="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium tracking-widest"
           style={{ marginTop: 30, marginLeft: 100 }}
         >
-          {blog?blog.category:''}
+          {blog ? blog.category : ""}
         </span>
         {localStorage.getItem("role") === "Moderator" && (
           <Button
@@ -126,13 +126,24 @@ const Blog = ({ blogsList: blogs, setBlogs }) => {
           <img
             className="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded"
             alt="hero"
-            src={blog?blog.cover:''}
+            src={blog ? blog.cover : ""}
           />
           <div className="text-center lg:w-2/3 w-full">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-              {blog?blog.title:''}
+              {blog ? blog.title : ""}
             </h1>
-            <p className="mb-8 leading-relaxed">{blog?blog.description:''}</p>
+            <p className="mb-8 leading-relaxed">
+              {blog ? blog.description : ""}. Lorem Ipsum is simply dummy text
+              of the printing and typesetting industry. Lorem Ipsum has been the
+              industry's standard dummy text ever since the 1500s, when an
+              unknown printer took a galley of type and scrambled it to make a
+              type specimen book. It has survived not only five centuries, but
+              also the leap into electronic typesetting, remaining essentially
+              unchanged. It was popularised in the 1960s with the release of
+              Letraset sheets containing Lorem Ipsum passages, and more recently
+              with desktop publishing software like Aldus PageMaker including
+              versions of Lorem Ipsum.
+            </p>
             <div className="flex justify-center"></div>
           </div>
         </div>
@@ -153,7 +164,7 @@ const Blog = ({ blogsList: blogs, setBlogs }) => {
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
-            {blog?blog.likes:''}
+            {blog ? blog.likes : ""}
           </span>
           <span
             className="text-gray-400 inline-flex items-center leading-none text-sm"
@@ -170,7 +181,7 @@ const Blog = ({ blogsList: blogs, setBlogs }) => {
             >
               <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
             </svg>
-            {blog?blog.comments.length:''}
+            {blog ? blog.comments.length : ""}
           </span>
         </div>
         <Link href="/" className="inline-flex items-center mx-5 mb-5">
@@ -181,10 +192,10 @@ const Blog = ({ blogsList: blogs, setBlogs }) => {
           />
           <span className="flex-grow flex flex-col pl-4">
             <span className="title-font font-medium text-gray-900">
-              {blog?blog.authorName:''}
+              {blog ? blog.authorName : ""}
             </span>
             <span className="text-gray-400 text-xs tracking-widest mt-0.5">
-              {blog?blog.createdAt:''}
+              {blog ? blog.createdAt : ""}
             </span>
           </span>
         </Link>

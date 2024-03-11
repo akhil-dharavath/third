@@ -10,12 +10,17 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 const sections = [
+  { title: "Academic", url: "academic" },
   { title: "Career", url: "career" },
+  { title: "Campus", url: "campus" },
   { title: "Culture", url: "culture" },
+  { title: "Local Community", url: "local" },
   { title: "Social", url: "social" },
   { title: "Sports", url: "sports" },
   { title: "Health and Wellness", url: "health" },
   { title: "Technology", url: "technology" },
+  { title: "Travel", url: "travel" },
+  { title: "Alumni", url: "alumni" },
 ];
 
 function App() {
@@ -38,10 +43,30 @@ function App() {
           }
         />
         <Route
+          path="/academic"
+          element={
+            <Blogs
+              title="Academic"
+              blogsList={blogsList}
+              setBlogsList={setBlogsList}
+            />
+          }
+        />
+        <Route
           path="/career"
           element={
             <Blogs
               title="Career"
+              blogsList={blogsList}
+              setBlogsList={setBlogsList}
+            />
+          }
+        />
+        <Route
+          path="/campus"
+          element={
+            <Blogs
+              title="Campus"
               blogsList={blogsList}
               setBlogsList={setBlogsList}
             />
@@ -53,6 +78,16 @@ function App() {
           element={
             <Blogs
               title="Culture"
+              blogsList={blogsList}
+              setBlogsList={setBlogsList}
+            />
+          }
+        />
+        <Route
+          path="/local"
+          element={
+            <Blogs
+              title="Local Community"
               blogsList={blogsList}
               setBlogsList={setBlogsList}
             />
@@ -93,6 +128,26 @@ function App() {
           element={
             <Blogs
               title="Technology"
+              blogsList={blogsList}
+              setBlogsList={setBlogsList}
+            />
+          }
+        />
+        <Route
+          path="/travel"
+          element={
+            <Blogs
+              title="Travel"
+              blogsList={blogsList}
+              setBlogsList={setBlogsList}
+            />
+          }
+        />
+        <Route
+          path="/alumni"
+          element={
+            <Blogs
+              title="Alumni"
               blogsList={blogsList}
               setBlogsList={setBlogsList}
             />
