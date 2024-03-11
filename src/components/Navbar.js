@@ -259,19 +259,14 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
                 onChange={(e) => handleChange(e)}
                 size="small"
               >
-                <MenuItem value="Academic">Academic</MenuItem>
                 <MenuItem value="Career">Career</MenuItem>
-                <MenuItem value="Campus">Campus</MenuItem>
                 <MenuItem value="Culture">Culture</MenuItem>
-                <MenuItem value="Local Community">Local Community</MenuItem>
                 <MenuItem value="Social">Social</MenuItem>
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Health and Wellness">
                   Health and Wellness
                 </MenuItem>
                 <MenuItem value="Technology">Technology</MenuItem>
-                <MenuItem value="Travel">Travel</MenuItem>
-                <MenuItem value="Alumni">Alumni</MenuItem>
               </Select>
             </FormControl>
             <TextField

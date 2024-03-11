@@ -10,17 +10,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 const sections = [
-  { title: "Academic", url: "academic" },
   { title: "Career", url: "career" },
-  { title: "Campus", url: "campus" },
   { title: "Culture", url: "culture" },
-  { title: "Local Community", url: "local" },
   { title: "Social", url: "social" },
   { title: "Sports", url: "sports" },
   { title: "Health and Wellness", url: "health" },
   { title: "Technology", url: "technology" },
-  { title: "Travel", url: "travel" },
-  { title: "Alumni", url: "alumni" },
 ];
 
 function App() {
@@ -37,26 +32,13 @@ function App() {
       />
       <Routes>
         <Route
-          exact
           path="/"
           element={
             <Blogs title="" blogsList={blogsList} setBlogsList={setBlogsList} />
           }
         />
         <Route
-          exact
-          path="academic"
-          element={
-            <Blogs
-              title="Academic"
-              blogsList={blogsList}
-              setBlogsList={setBlogsList}
-            />
-          }
-        />
-        <Route
-          exact
-          path="career"
+          path="/career"
           element={
             <Blogs
               title="Career"
@@ -65,20 +47,9 @@ function App() {
             />
           }
         />
+
         <Route
-          exact
-          path="campus"
-          element={
-            <Blogs
-              title="Campus"
-              blogsList={blogsList}
-              setBlogsList={setBlogsList}
-            />
-          }
-        />
-        <Route
-          exact
-          path="culture"
+          path="/culture"
           element={
             <Blogs
               title="Culture"
@@ -88,19 +59,7 @@ function App() {
           }
         />
         <Route
-          exact
-          path="local"
-          element={
-            <Blogs
-              title="Local Community"
-              blogsList={blogsList}
-              setBlogsList={setBlogsList}
-            />
-          }
-        />
-        <Route
-          exact
-          path="social"
+          path="/social"
           element={
             <Blogs
               title="Social"
@@ -110,8 +69,7 @@ function App() {
           }
         />
         <Route
-          exact
-          path="sports"
+          path="/sports"
           element={
             <Blogs
               title="Sports"
@@ -121,8 +79,7 @@ function App() {
           }
         />
         <Route
-          exact
-          path="health"
+          path="/health"
           element={
             <Blogs
               title="Health and Wellness"
@@ -132,8 +89,7 @@ function App() {
           }
         />
         <Route
-          exact
-          path="technology"
+          path="/technology"
           element={
             <Blogs
               title="Technology"
@@ -143,35 +99,15 @@ function App() {
           }
         />
         <Route
-          exact
-          path="travel"
-          element={
-            <Blogs
-              title="Travel"
-              blogsList={blogsList}
-              setBlogsList={setBlogsList}
-            />
-          }
-        />
-        <Route
-          exact
-          path="alumni"
-          element={
-            <Blogs
-              title="Alumni"
-              blogsList={blogsList}
-              setBlogsList={setBlogsList}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/blog/:id"
+          path="/:id"
           element={<Blog blogs={blogsList} setBlogs={setBlogsList} />}
         />
-        <Route exact path="*" element={<PageNotFound />} />
-        <Route exact path="/login" element={<Login disabledAccts={disabledAccts} />} />
-        <Route exact path="/register" element={<Register />} />
+        <Route path="*" element={<PageNotFound />} />
+        <Route
+          path="/login"
+          element={<Login disabledAccts={disabledAccts} />}
+        />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
