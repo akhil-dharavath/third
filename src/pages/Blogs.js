@@ -13,7 +13,7 @@ const Blogs = () => {
     if (res.data) {
       setBlogs(res.data);
     } else {
-      // alert(res.response.data.message);
+      alert(res.response.data.message);
     }
   };
 

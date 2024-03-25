@@ -80,7 +80,7 @@ const Navbar = ({ sections }) => {
       const path = addPost.category.toLowerCase();
       navigate(`/${path}`);
     } else {
-      // alert(res.response.data.message);
+      alert(res.response.data.message);
     }
   };
 
@@ -92,14 +92,14 @@ const Navbar = ({ sections }) => {
       if (res.data) {
         setUser(res.data);
       } else {
-        // alert(res.response.data.message);
+        alert(res.response.data.message);
       }
       if (res.data.role === "Administrator") {
         let resp = await getAllUsers();
         if (resp.data) {
           setUsers(resp.data);
         } else {
-          // alert(resp.response.data.message);
+          alert(resp.response.data.message);
         }
       }
     }

@@ -57,7 +57,7 @@ const BlogItem = ({
       handleClose();
       window.location.reload();
     } else {
-      // alert(res.response.data.message);
+      alert(res.response.data.message);
     }
   };
 

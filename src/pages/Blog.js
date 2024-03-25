@@ -51,7 +51,7 @@ const Blog = () => {
             color="error"
             variant="outlined"
             style={{
-              marginTop: -30,
+              marginTop: 10,
               marginLeft: "auto",
               marginRight: 100,
               display: "block",
