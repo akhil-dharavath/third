@@ -1,40 +1,41 @@
 import React, { useEffect, useState } from "react";
 import BlogItem from "../components/BlogItem";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getAllBlogsApi } from "../api/blogs";
 
-const Blogs = ({ blogsList, setBlogsList }) => {
-  const location = useLocation().pathname.slice(1);
-  const [blog, setBlog] = useState(blogsList);
-
+const Blogs = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (location === "") {
-      setBlog(blogsList);
+  const location = useLocation().pathname.slice(1);
+  const [blogs, setBlogs] = useState([]);
+
+  const getBlogs = async () => {
+    const res = await getAllBlogsApi();
+    if (res.data) {
+      setBlogs(res.data);
     } else {
-      setBlog(
-        blogsList.filter((li) => li.category.toLowerCase().includes(location))
-      );
+      // alert(res.response.data.message);
     }
-    if (!localStorage.getItem("name")) {
+  };
+
+  useEffect(() => {
+    getBlogs();
+    if (!localStorage.getItem("token")) {
       navigate("/login");
     }
     // eslint-disable-next-line
-  }, [location]);
+  }, []);
 
   return (
     <section className="text-gray-600 body-font mx-5 overflow-hidden">
-      <div className="container px-5 py-24 mx-auto">
-        <div className="-my-8 divide-y-2 mx-5 divide-gray-100">
-          {blog &&
-            blog.length > 0 &&
-            blog.map((blo) => (
-              <BlogItem
-                key={blo.id}
-                blog={blo}
-                blogs={blogsList}
-                setBlogs={setBlogsList}
-              />
-            ))}
+      <div className="container py-24 mx-auto">
+        <div className="-my-8 divide-y-2 divide-gray-100 all-blogs">
+          {blogs && blogs.length > 0 ? (
+            blogs
+              .filter((blog) => blog.category.toLowerCase().includes(location))
+              .map((blog) => <BlogItem key={blog._id} blog={blog} />)
+          ) : (
+            <p className="text-center mt-5">Trouble finding blogs</p>
+          )}
         </div>
       </div>
     </section>

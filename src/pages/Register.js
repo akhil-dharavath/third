@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../config/login";
+import { registerApi } from "../api/authentication";
 
 const Register = () => {
   const [details, setDetails] = useState({
@@ -16,20 +16,12 @@ const Register = () => {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (details.password === details.confirmPassword) {
-      const data = login.filter((user) => user.email === details.email);
-      if (data.length > 0) {
-        alert("User with this email already exists!");
-      } else {
-        localStorage.setItem("userid", Math.floor(Math.random() * 4000));
-        localStorage.setItem("name", details.username);
-        localStorage.setItem("email", details.email);
-        localStorage.setItem("password", details.password);
-        localStorage.setItem("role", "Student");
-        navigate("/");
-      }
+    const response = await registerApi(details);
+    if (response.data) {
+      localStorage.setItem("token", response.data.token);
+      navigate("/");
     } else {
-      alert("passwords doesnot match");
+      alert(response.response.data.message);
     }
   };
   return (

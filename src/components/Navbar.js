@@ -7,24 +7,34 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { login } from "../config/login";
+import { createBlogApi } from "../api/blogs";
+import {
+  disableUser,
+  enableUser,
+  getAllUsers,
+  getUserApi,
+} from "../api/authentication";
 
-const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
-  const location = useLocation();
-
+const Navbar = ({ sections }) => {
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [show, setShow] = React.useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+    window.location.reload();
+  };
+
+  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -49,16 +59,12 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
   };
 
   const [addPost, setAddPost] = useState({
-    id: Math.floor(Math.random() * 1000000),
     title: "",
     description: "",
     cover: "",
     authorName: "",
     createdAt: "",
     category: "",
-    authorAvatar: require("../assets/author.jpg"),
-    likes: 0,
-    comments: [],
   });
 
   const handleChange = (e) => {
@@ -66,64 +72,70 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
     setAddPost({ ...addPost, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setBlogs([...blogs, addPost]);
-    setAddPost({
-      id: Math.floor(Math.random() * 1000000),
-      title: "",
-      description: "",
-      cover: "",
-      authorName: "",
-      createdAt: "Academic",
-      category: "",
-      authorAvatar: require("../assets/author.jpg"),
-      likes: 0,
-      comments: [],
-    });
-    handleClose();
-    const path = addPost.category.toLowerCase();
-    navigate(`/${path}`);
+    const res = await createBlogApi(addPost);
+    if (res.data) {
+      handleClose();
+      const path = addPost.category.toLowerCase();
+      navigate(`/${path}`);
+    } else {
+      // alert(res.response.data.message);
+    }
   };
 
-  const [selectedSwitches, setSelectedSwitches] = useState([]);
-
-  // Function to toggle the selected state of a switch
-  const handleSwitchToggle = (id) => {
-    setSelectedSwitches((prevSelectedSwitches) => {
-      if (prevSelectedSwitches.includes(id)) {
-        return prevSelectedSwitches.filter((switchId) => switchId !== id);
+  const [user, setUser] = useState({});
+  const [users, setUsers] = useState([]);
+  const getUser = async () => {
+    if (localStorage.getItem("token")) {
+      const res = await getUserApi();
+      if (res.data) {
+        setUser(res.data);
       } else {
-        return [...prevSelectedSwitches, id];
+        // alert(res.response.data.message);
       }
-    });
+      if (res.data.role === "Administrator") {
+        let resp = await getAllUsers();
+        if (resp.data) {
+          setUsers(resp.data);
+        } else {
+          // alert(resp.response.data.message);
+        }
+      }
+    }
   };
 
-  const handleUpdate = () => {
-    setShow(false);
-    localStorage.setItem("selectedIds", selectedSwitches);
-    setDisabledAccts(selectedSwitches);
+  const fetchUsers = async () => {
+    let resp = await getAllUsers();
+    if (resp.data) {
+      setUsers(resp.data);
+    } else {
+      alert(resp.response.data.message);
+    }
   };
 
-  const selectedIds = localStorage.getItem("selectedIds");
-  const ids = selectedIds ? selectedIds.split(",") : [];
-
-  const handleLogout = () => {
-    localStorage.removeItem("userid");
-    localStorage.removeItem("name");
-    localStorage.removeItem("email");
-    localStorage.removeItem("password");
-    localStorage.removeItem("role");
-    navigate("/login");
-    location.reload();
+  const handleEnableDisableUser = async (userId, enable) => {
+    if (enable) {
+      await enableUser(userId);
+    } else {
+      await disableUser(userId);
+    }
+    // Refetch users after enabling/disabling user
+    fetchUsers();
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      getUser();
+    }
+  }, []);
 
   return (
     <header
       className="text-gray-600 body-font bg-gray-800"
-      style={{ display: !localStorage.getItem("name") && "none" }}
+      style={{ display: !localStorage.getItem("token") && "none" }}
     >
-      {localStorage.getItem("name") && (
+      {localStorage.getItem("token") && (
         <div className="mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
           <Link
             to={"/"}
@@ -149,23 +161,17 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {localStorage.getItem("name").split(" ")[0]}
+            {user && user.username && user.username.split(" ")[0]}
           </a>
           <ul className="dropdown-menu">
             <li>
-              <Link className="dropdown-item">
-                {localStorage.getItem("name")}
-              </Link>
+              <Link className="dropdown-item">{user && user.username}</Link>
             </li>
             <li>
-              <Link className="dropdown-item">
-                {localStorage.getItem("email")}
-              </Link>
+              <Link className="dropdown-item">{user && user.email}</Link>
             </li>
             <li>
-              <Link className="dropdown-item">
-                {localStorage.getItem("role")}
-              </Link>
+              <Link className="dropdown-item">{user && user.role}</Link>
             </li>
             <li>
               <hr className="dropdown-divider" />
@@ -178,22 +184,18 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
             <li>
               <hr className="dropdown-divider" />
             </li>
-            {localStorage.getItem("role") &&
-              localStorage.getItem("role") === "Administrator" && (
-                <>
-                  <li>
-                    <Link
-                      className="dropdown-item"
-                      onClick={() => setShow(true)}
-                    >
-                      Manage Login Accounts
-                    </Link>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                </>
-              )}
+            {user && user && user.role === "Administrator" && (
+              <>
+                <li>
+                  <Link className="dropdown-item" onClick={() => setShow(true)}>
+                    Manage Login Accounts
+                  </Link>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+              </>
+            )}
             <li>
               <Link
                 className="dropdown-item"
@@ -311,25 +313,25 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
         <Dialog open={show} onClose={() => setShow(false)} fullWidth>
           <DialogTitle>Manage Login Accounts</DialogTitle>
           <DialogContent>
-            {login &&
-              login.length > 0 &&
-              login
+            {users &&
+              users.length > 0 &&
+              users
                 .filter((user) => user.role !== "Administrator")
                 .map((user) => (
                   <Box
-                    key={user.id}
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+                    key={user._id}
+                    sx={{ display: "flex", alignItems: "center" }}
                   >
-                    <Typography>{user.name}</Typography>
-                    <Checkbox
-                      defaultChecked={
-                        ids.length > 0 &&
-                        ids.filter((acct) => acct === user.id.toString())
-                          .length > 0
-                          ? false
-                          : true
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          defaultChecked={user.enable ? true : false}
+                          onChange={() =>
+                            handleEnableDisableUser(user._id, !user.enable)
+                          }
+                        />
                       }
-                      onChange={() => handleSwitchToggle(user.id)}
+                      label={user.username}
                     />
                   </Box>
                 ))}
@@ -341,9 +343,6 @@ const Navbar = ({ sections, blogs, setBlogs, setDisabledAccts }) => {
               onClick={() => setShow(false)}
             >
               Close
-            </Button>
-            <Button sx={{ width: "auto" }} onClick={() => handleUpdate()}>
-              Update
             </Button>
           </DialogActions>
         </Dialog>

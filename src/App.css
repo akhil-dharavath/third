@@ -11,10 +11,10 @@ header a,
 .p-6 span {
   color: rgba(255, 255, 255, 0.818) !important;
 }
-.MuiPaper-root{
+.MuiPaper-root {
   background-color: white;
 }
-.comment-input{
+.comment-input {
   background-color: #f3f2f2 !important;
   border: none !important;
   padding: 8px 10px;
@@ -23,10 +23,10 @@ header a,
   border: 2px solid black !important;
   border-radius: 7px;
 }
-.comments .btn-primary{
+.comments .btn-primary {
   color: #0a58ca;
 }
-.comments .btn-primary:hover{
+.comments .btn-primary:hover {
   color: white;
 }
 
@@ -113,4 +113,24 @@ i {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+}
+
+.all-blogs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.MuiCard-root{
+  margin-bottom: 30px;
+}
+
+.MuiCardMedia-img{
+  min-height: 250px;
+  max-height: 250px;
+}
+
+.blog-author, .blog-category{
+  margin-right: auto !important;
+  text-decoration: none !important;
 }

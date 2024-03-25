@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { login } from "../config/login";
+import { addCommentApi } from "../api/blogs";
+import { getUserApi } from "../api/authentication";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import { blue } from "@mui/material/colors";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import CommentIcon from "@mui/icons-material/Comment";
+import { Badge, Button } from "@mui/material";
 
 const BlogItem = ({
   blog: {
@@ -14,17 +27,14 @@ const BlogItem = ({
     title,
     createdAt,
     authorName,
-    authorAvatar,
     cover,
     category,
-    id,
+    _id,
     likes,
     comments,
   },
-  blogs,
-  setBlogs,
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -37,59 +47,94 @@ const BlogItem = ({
   };
 
   const [comment, setComment] = useState("");
-  const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment === "") {
       return;
     }
-    const okay = {
-      description,
-      title,
-      createdAt,
-      authorName,
-      authorAvatar,
-      cover,
-      category,
-      id,
-      likes,
-      comments: [
-        ...comments,
-        { user: Number(localStorage.getItem("userid")), comment },
-      ],
-    };
-    const old = blogs.filter((blo) => blo.id !== okay.id);
-    setBlogs([okay, ...old]);
-    const subCategory = category.split(" ");
-    setComment("");
-    navigate(`/${subCategory[0].toLowerCase()}`);
+    const res = await addCommentApi(_id, comment);
+    if (res.data) {
+      handleClose();
+      window.location.reload();
+    } else {
+      // alert(res.response.data.message);
+    }
   };
 
+  const [users, setUsers] = useState({});
   useEffect(() => {
-    navigate("/");
-    handleClose();
-    // setBlogs(blogs);
+    const fetchUser = async (id) => {
+      const res = await getUserApi(id);
+      if (res.data) {
+        setUsers((prevUsers) => ({
+          ...prevUsers,
+          [id]: res.data.username,
+        }));
+      } else {
+        console.log(res);
+        setUsers((prevUsers) => ({
+          ...prevUsers,
+          [id]: "Unknown",
+        }));
+      }
+    };
+    comments.forEach((comment) => {
+      if (!users[comment.user]) {
+        fetchUser(comment.user);
+      }
+    });
     // eslint-disable-next-line
-  }, [blogs]);
+  }, [comments]);
+
+  const navigate = useNavigate();
+  const handleMoreDetails = () => {
+    navigate(`/${_id}`);
+  };
 
   return (
-    <div className="">
-      <div className="py-8 flex flex-wrap md:flex-nowrap">
-        <div className="md:w-64  md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-          <span className="font-semibold title-font text-gray-700">{category}</span>
-          <span className="text-sm text-gray-500">{createdAt}</span>
-        </div>
-        <div className="md:flex-grow">
-          <h2 className="text-2xl font-medium text-gray-900 title-font mb-2">{title}</h2>
-          <p className="leading-relaxed">{description}</p>
-          <Link to={`/${id}`} className="text-indigo-500 inline-flex items-center mt-4">Learn More
-            <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14"></path>
-              <path d="M12 5l7 7-7 7"></path>
-            </svg>
-          </Link>
-        </div>
-      </div>
+    <>
+      <Card sx={{ maxWidth: 345 }}>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: blue[600] }} aria-label="recipe">
+              {authorName.slice(4, 5).toUpperCase()}
+            </Avatar>
+          }
+          title={authorName}
+          subheader={createdAt.slice(0, 10)}
+        />
+        <CardMedia component="img" height="194" image={cover} alt={title} />
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h6"
+            component="div"
+            sx={{ hyphens: "auto" }}
+          >
+            {title.length > 50 ? `${title.slice(0, 50)}...` : title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {description.length > 80
+              ? `${description.slice(0, 80)}...`
+              : description}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton aria-label="add to favorites">
+            <Badge badgeContent={likes} color="primary">
+              <FavoriteIcon />
+            </Badge>
+          </IconButton>
+          <IconButton aria-label="comment" onClick={() => handleClickOpen()}>
+            <Badge badgeContent={comments.length} color="primary">
+              <CommentIcon />
+            </Badge>
+          </IconButton>
+          <Button onClick={handleMoreDetails} sx={{ marginLeft: "auto" }} size="small">
+            Learn More
+          </Button>
+        </CardActions>
+      </Card>
       <Dialog
         fullScreen={fullScreen}
         open={open}
@@ -117,11 +162,7 @@ const BlogItem = ({
                       }}
                     />
                     <div className="text-black">
-                      <b>
-                        {login.length > 0 &&
-                          login.filter((user) => user.id === comment.user)[0]
-                            .name}
-                      </b>
+                      <b>{users[comment.user]}</b>
                       <br />
                       {comment.comment}
                     </div>
@@ -152,8 +193,7 @@ const BlogItem = ({
           </DialogContentText>
         </DialogContent>
       </Dialog>
-    </div>
-    
+    </>
   );
 };
 
