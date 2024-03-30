@@ -132,7 +132,7 @@ const Navbar = ({ sections }) => {
 
   return (
     <header
-      className="text-gray-600 body-font bg-gray-800"
+      className="border-b-2 border-gray-500"
       style={{ display: !localStorage.getItem("token") && "none" }}
     >
       {localStorage.getItem("token") && (
@@ -141,14 +141,14 @@ const Navbar = ({ sections }) => {
             to={"/"}
             className="flex title-font font-medium items-center text-gray-900 mb-0 md:mb-0"
           >
-            <span className="ml-3 text-xl">Blogs</span>
+            <span className="ml-0 text-xl">KnowledgeNest</span>
           </Link>
-          <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-gray-400	flex flex-wrap items-center text-base justify-center">
+          <nav className="md:mr-auto md:ml-3 md:py-1 md:pl-3 md:border-gray-400	flex flex-wrap items-center text-base justify-center">
             {sections.map((section) => (
               <Link
                 key={section.url}
                 to={`/${section.url}`}
-                className="mr-5 hover:text-gray-900"
+                className="mr-3 hover:text-gray-900"
               >
                 {section.title}
               </Link>
@@ -179,6 +179,11 @@ const Navbar = ({ sections }) => {
             <li>
               <Link className="dropdown-item" onClick={handleClickOpen}>
                 Add Post
+              </Link>
+            </li>
+            <li>
+              <Link className="dropdown-item" to="/unsubscribed">
+                Unsubscribed blogs
               </Link>
             </li>
             <li>

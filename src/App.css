@@ -4,13 +4,14 @@
   box-sizing: border-box;
   /* background-color: black; */
 }
-header a,
+
 .p-6 h2,
 .p-6 h1,
 .p-6 p,
 .p-6 span {
   color: rgba(255, 255, 255, 0.818) !important;
 }
+
 .MuiPaper-root {
   background-color: white;
 }
@@ -30,9 +31,6 @@ header a,
   color: white;
 }
 
-header a:hover {
-  color: white !important;
-}
 .dropdown-menu {
   background-color: white;
 }

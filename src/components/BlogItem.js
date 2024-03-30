@@ -6,8 +6,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { addCommentApi } from "../api/blogs";
-import { getUserApi } from "../api/authentication";
+import { addCommentApi, openaiCommentApi } from "../api/blogs";
+import { getAllUsers } from "../api/authentication";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -62,29 +62,28 @@ const BlogItem = ({
   };
 
   const [users, setUsers] = useState({});
+  const fetchAllUsers = async () => {
+    const res = await getAllUsers();
+    if (res.data) {
+      setUsers(res.data);
+    } else {
+      alert("You are not Authorized");
+    }
+  };
+
+  const generateComment = async () => {
+    const res = await openaiCommentApi(title, description);
+    if (res.data) {
+      setComment(res.data);
+    } else {
+      alert(res.response.data.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchUser = async (id) => {
-      const res = await getUserApi(id);
-      if (res.data) {
-        setUsers((prevUsers) => ({
-          ...prevUsers,
-          [id]: res.data.username,
-        }));
-      } else {
-        console.log(res);
-        setUsers((prevUsers) => ({
-          ...prevUsers,
-          [id]: "Unknown",
-        }));
-      }
-    };
-    comments.forEach((comment) => {
-      if (!users[comment.user]) {
-        fetchUser(comment.user);
-      }
-    });
+    fetchAllUsers();
     // eslint-disable-next-line
-  }, [comments]);
+  }, []);
 
   const navigate = useNavigate();
   const handleMoreDetails = () => {
@@ -130,7 +129,11 @@ const BlogItem = ({
               <CommentIcon />
             </Badge>
           </IconButton>
-          <Button onClick={handleMoreDetails} sx={{ marginLeft: "auto" }} size="small">
+          <Button
+            onClick={handleMoreDetails}
+            sx={{ marginLeft: "auto" }}
+            size="small"
+          >
             Learn More
           </Button>
         </CardActions>
@@ -162,7 +165,15 @@ const BlogItem = ({
                       }}
                     />
                     <div className="text-black">
-                      <b>{users[comment.user]}</b>
+                      <b>
+                        {users &&
+                        users.length > 0 &&
+                        users.filter((user) => user._id === comment.user)
+                          .length > 0
+                          ? users.filter((user) => user._id === comment.user)[0]
+                              .username
+                          : "Unknown"}
+                      </b>
                       <br />
                       {comment.comment}
                     </div>
@@ -185,9 +196,22 @@ const BlogItem = ({
                   className="comment-input"
                   rows={4}
                 />
-                <button className="btn btn-primary my-2 w-auto" type="submit">
-                  Post
-                </button>
+                <div className="d-flex">
+                  <Button
+                    variant="contained"
+                    onClick={() => generateComment()}
+                    sx={{ margin: "10px 5px" }}
+                  >
+                    Auto Generate
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    type="submit"
+                    sx={{ margin: "10px 5px" }}
+                  >
+                    Post
+                  </Button>
+                </div>
               </form>
             </div>
           </DialogContentText>

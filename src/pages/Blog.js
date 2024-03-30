@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Link } from "@mui/material";
-import { deleteBlogApi, getOneBlogApi } from "../api/blogs";
+import {
+  deleteBlogApi,
+  getOneBlogApi,
+  subscribeApi,
+  unSubscribeApi,
+} from "../api/blogs";
 import { getUserApi } from "../api/authentication";
 
 const Blog = () => {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [user, setUser] = useState({});
+  const [subscribed, setSubscribed] = useState(null);
 
   const getBlog = async () => {
     const res = await getOneBlogApi(id);
@@ -22,6 +28,8 @@ const Blog = () => {
     const res = await getUserApi();
     if (res.data) {
       setUser(res.data);
+      const count = res.data.unSubscribed.filter((sub) => sub === id).length;
+      setSubscribed(count === 0);
     } else {
       alert(res.response.data.messege);
     }
@@ -42,26 +50,60 @@ const Blog = () => {
       alert(res.response.data.message);
     }
   };
+  
+  const handleSubscribe = async () => {
+    const res = await subscribeApi(id);
+    if (res.data) {
+      setSubscribed(true);
+    } else {
+      alert(res.response.data.message);
+    }
+  };
+
+  const handleUnSubscribe = async () => {
+    const res = await unSubscribeApi(id);
+    if (res.data) {
+      setSubscribed(false);
+    } else {
+      alert(res.response.data.message);
+    }
+  };
 
   return (
     <>
       <section className="text-gray-600 body-font">
-        {user && user.role === "Moderator" && (
+        <div
+          style={{
+            width: "auto",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: 20,
+          }}
+        >
           <Button
-            color="error"
+            color="primary"
             variant="outlined"
-            style={{
-              marginTop: 10,
-              marginLeft: "auto",
-              marginRight: 100,
-              display: "block",
-            }}
-            onClick={() => handleDelete()}
+            sx={{ width: "auto" }}
+            className="mx-2"
+            onClick={() =>
+              subscribed ? handleUnSubscribe() : handleSubscribe()
+            }
           >
-            Delete Post
+            {subscribed ? "Unsubscribe" : "Subscribe"}
           </Button>
-        )}
-        <div className="container mx-auto flex px-5 pt-12 items-center justify-center flex-col">
+          {user && user.role === "Moderator" && (
+            <Button
+              color="error"
+              variant="outlined"
+              sx={{ width: "auto" }}
+              className="mx-2"
+              onClick={() => handleDelete()}
+            >
+              Delete Blog
+            </Button>
+          )}
+        </div>
+        <div className="container mx-auto flex px-5 pt-6 items-center justify-center flex-col">
           <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
             {blog ? blog.title : ""}
           </h1>
@@ -86,7 +128,7 @@ const Blog = () => {
               </span> */}
             </span>
           </Link>
-          
+
           <span className="inline-block py-1 px-3 mx-5 mb-4 mt-3 rounded bg-indigo-100 text-indigo-500 font-medium tracking-widest blog-category">
             {blog ? blog.category : ""}
           </span>
@@ -113,42 +155,42 @@ const Blog = () => {
           </div>
         </div>
         <div
-            className="flex items-center flex-wrap pb-4 mb-4 border-b-4 border-indigo-400 mt-0 w-full"
-            style={{ maxWidth: "90vw", margin: "auto" }}
-          >
-            <span className="text-gray-400 mr-3 inline-flex items-center ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
-              <svg
-                className="w-4 h-4 mr-1"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-              {blog ? blog.likes : ""}
-            </span>
-            <span
-              className="text-gray-400 inline-flex items-center leading-none text-sm"
-              // onClick={() => handleClickOpen()}
+          className="flex items-center flex-wrap pb-4 mb-4 border-b-4 border-indigo-400 mt-0 w-full"
+          style={{ maxWidth: "90vw", margin: "auto" }}
+        >
+          <span className="text-gray-400 mr-3 inline-flex items-center ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+            <svg
+              className="w-4 h-4 mr-1"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
             >
-              <svg
-                className="w-4 h-4 mr-1"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-              </svg>
-              {blog ? blog.comments.length : ""}
-            </span>
-          </div>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            {blog ? blog.likes : ""}
+          </span>
+          <span
+            className="text-gray-400 inline-flex items-center leading-none text-sm"
+            // onClick={() => handleClickOpen()}
+          >
+            <svg
+              className="w-4 h-4 mr-1"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+            </svg>
+            {blog ? blog.comments.length : ""}
+          </span>
+        </div>
       </section>
     </>
   );
