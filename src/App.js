@@ -7,6 +7,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useState } from "react";
+import { SnackbarProvider } from "notistack";
 
 const sections = [
   { title: "Academic", url: "academic" },
@@ -26,37 +27,42 @@ function App() {
   const [search, setSearch] = useState("");
 
   return (
-    <BrowserRouter>
-      <Navbar sections={sections} />
-      <Routes>
-        <Route
-          path="/"
-          element={<Blogs search={search} setSearch={setSearch} title="" />}
-        />
-        <Route
-          path="/unsubscribed"
-          element={<Blogs search={search} setSearch={setSearch} title="" />}
-        />
-        {sections.map((section) => (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+    >
+      <BrowserRouter>
+        <Navbar sections={sections} />
+        <Routes>
           <Route
-            key={section.url}
-            path={`/${section.url}`}
-            exact
-            element={
-              <Blogs
-                search={search}
-                setSearch={setSearch}
-                title={section.title}
-              />
-            }
+            path="/"
+            element={<Blogs search={search} setSearch={setSearch} title="" />}
           />
-        ))}
-        <Route path="/:id" element={<Blog />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/unsubscribed"
+            element={<Blogs search={search} setSearch={setSearch} title="" />}
+          />
+          {sections.map((section) => (
+            <Route
+              key={section.url}
+              path={`/${section.url}`}
+              exact
+              element={
+                <Blogs
+                  search={search}
+                  setSearch={setSearch}
+                  title={section.title}
+                />
+              }
+            />
+          ))}
+          <Route path="/:id" element={<Blog />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </SnackbarProvider>
   );
 }
 

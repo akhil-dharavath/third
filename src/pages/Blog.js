@@ -8,6 +8,7 @@ import {
   unSubscribeApi,
 } from "../api/blogs";
 import { getUserApi } from "../api/authentication";
+import { enqueueSnackbar } from "notistack";
 
 const Blog = () => {
   const { id } = useParams();
@@ -45,6 +46,7 @@ const Blog = () => {
   const handleDelete = async () => {
     const res = await deleteBlogApi(id);
     if (res.data) {
+      enqueueSnackbar("Successfully blog has been deleted!", { variant: "success" });
       navigate("/");
     } else {
       alert(res.response.data.message);

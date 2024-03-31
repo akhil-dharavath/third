@@ -124,6 +124,33 @@ const getTopStoriesApi = async (city) => {
     return error;
   }
 };
+const suggestApi = async (city, question, temperature, weather) => {
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json" },
+      url: `${process.env.REACT_APP_URL}/blogs/search/event`,
+      method: "POST",
+      data: JSON.stringify({ city, question, temperature, weather }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getEventApi = async (question) => {
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json" },
+      url: `${process.env.REACT_APP_URL}/blogs/get/event`,
+      method: "POST",
+      data: JSON.stringify({ question }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
 export {
   getAllBlogsApi,
@@ -134,6 +161,7 @@ export {
   subscribeApi,
   unSubscribeApi,
   openaiCommentApi,
-  getTopStoriesApi
+  getTopStoriesApi,
+  suggestApi,
+  getEventApi
 };
-

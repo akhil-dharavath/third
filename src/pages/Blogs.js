@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
 import BlogItem from "../components/BlogItem";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getAllBlogsApi, getTopStoriesApi } from "../api/blogs";
+import {
+  getAllBlogsApi,
+  getEventApi,
+  getTopStoriesApi,
+  suggestApi,
+} from "../api/blogs";
 import { getUserApi } from "../api/authentication";
 import axios from "axios";
 import {
   Avatar,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   CardMedia,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   TextField,
   Typography,
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
+import Spinner from "../components/Spinner";
 
 const Blogs = ({ search, setSearch }) => {
   const navigate = useNavigate();
@@ -59,7 +71,7 @@ const Blogs = ({ search, setSearch }) => {
         setTopStories(res.data);
       } else {
         console.log(res);
-        // alert(res.response.data.message);
+        alert(res.response.data.message);
       }
     }
   };
@@ -76,10 +88,76 @@ const Blogs = ({ search, setSearch }) => {
     // eslint-disable-next-line
   }, []);
 
+  const [openFirst, setOpenFirst] = React.useState(false);
+  const [firstLoading, setFirstLoading] = React.useState(false);
+
+  const [openSecond, setOpenSecond] = React.useState(false);
+  const [secondLoading, setSecondLoading] = React.useState(false);
+
+  const [first, setFirst] = React.useState("");
+  const [second, setSecond] = React.useState([]);
+  const [locate, setLocate] = React.useState("");
+
+  const handleClickOpenFirst = async () => {
+    setOpenFirst(true);
+  };
+
+  const firstSubmit = async (city, question, temperature, weather) => {
+    const res = await suggestApi(city, question, temperature, weather);
+    if (res.data) {
+      setFirst(res.data);
+      setFirstLoading(false);
+      return;
+    } else {
+      setFirstLoading(false);
+      alert(res.response.data.message);
+      return;
+    }
+  };
+
+  const secondSubmit = async (question) => {
+    const res = await getEventApi(question);
+    if (res.data) {
+      setSecond(res.data);
+      setSecondLoading(false);
+      return;
+    } else {
+      setSecondLoading(false);
+      alert(res.response.data.message);
+      return;
+    }
+  };
+
+  const handleClickOpenSecond = () => {
+    setOpenSecond(true);
+  };
+
+  const handleCloseFirst = () => {
+    setOpenFirst(false);
+    setFirst("");
+    setLocate("");
+  };
+
+  const handleCloseSecond = () => {
+    setOpenSecond(false);
+    setSecond([]);
+    setLocate("");
+  };
+
+  const getLocation = () => {
+    if (address && address.region) {
+      setLocate(`${address.city}, ${address.region}`);
+    } else {
+      alert(
+        "Cannot access your location. You might have been blocked loaciton for the browser. Please allow loaction to see your current location"
+      );
+    }
+  };
+
   useEffect(() => {
-    getTopStories();
+    getAddress();
     // eslint-disable-next-line
-  }, [address]);
+  }, []);
 
   return (
     <section className="text-gray-600 body-font mx-5 overflow-hidden">
@@ -90,7 +168,7 @@ const Blogs = ({ search, setSearch }) => {
           alignItems: "center",
         }}
       >
-        <Typography sx={{mr:2}}>Search Blog: </Typography>
+        <Typography sx={{ mr: 2 }}>Search Blog: </Typography>
         <TextField
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -98,6 +176,22 @@ const Blogs = ({ search, setSearch }) => {
           size="small"
           className="pt-4 pb-4"
         />
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{ ml: 2, width: "auto" }}
+          onClick={handleClickOpenFirst}
+        >
+          Suggest activity
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{ ml: 2, width: "auto" }}
+          onClick={handleClickOpenSecond}
+        >
+          Real time events
+        </Button>
       </div>
       <div className="container py-12 mx-auto">
         <div className="-my-8 divide-y-2 divide-gray-100 all-blogs">
@@ -192,6 +286,133 @@ const Blogs = ({ search, setSearch }) => {
           )}
         </div>
       </div>
+      <Dialog
+        open={openFirst}
+        onClose={handleCloseFirst}
+        PaperProps={{
+          component: "form",
+          onSubmit: async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries(formData.entries());
+            const question = formJson.question;
+            if (address && address.city) {
+              setFirstLoading(true);
+              const res = await axios.get(
+                `https://api.openweathermap.org/data/2.5/onecall?lat=${address.latitude}&lon=${address.longitude}&exclude=minutely&units=metric&appid=117bfe6be263d54afb55f47b46b6daf1`
+              );
+              firstSubmit(
+                address.city,
+                question,
+                res.data.current.temp,
+                res.data.daily[0].weather[0].main
+              );
+            } else {
+              alert("trouble finding your location");
+            }
+          },
+        }}
+      >
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
+          {"Suggest Activities"}
+          <Button
+            variant="outlined"
+            sx={{ width: "auto" }}
+            onClick={() => getLocation()}
+          >
+            Get location
+          </Button>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Recommend activities based on current weather conditions.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            fullWidth
+            placeholder="Search event"
+            size="small"
+            name="question"
+          />
+          {locate !== "" && (
+            <Typography sx={{ mt: 1, mb: 1 }}>
+              Your current location is {locate}
+            </Typography>
+          )}
+          {firstLoading ? (
+            <Spinner />
+          ) : (
+            <Typography sx={{ mt: 1, mb: 1 }}>{first}</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseFirst} sx={{ width: "auto" }}>
+            Cancel
+          </Button>
+          <Button type="submit" sx={{ width: "auto" }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openSecond}
+        onClose={handleCloseSecond}
+        PaperProps={{
+          component: "form",
+          onSubmit: async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries(formData.entries());
+            const question = formJson.question;
+            secondSubmit(question);
+          },
+        }}
+      >
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
+          {"Real time events"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Search real-time events / search (current sports events).
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            fullWidth
+            placeholder="Search event"
+            size="small"
+            name="question"
+          />
+          {secondLoading ? (
+            <Spinner />
+          ) : (
+            second &&
+            second.length > 0 &&
+            second.map((done) => (
+              <Typography key={done.title} sx={{ mt: 1, mb: 1 }}>
+                <a
+                  target="_blank"
+                  href={done.link}
+                  rel="noreferrer"
+                  className="text-black no-underline"
+                >
+                  {done.title}
+                </a>
+              </Typography>
+            ))
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSecond} sx={{ width: "auto" }}>
+            Cancel
+          </Button>
+          <Button type="submit" sx={{ width: "auto" }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </section>
   );
 };

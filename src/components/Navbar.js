@@ -24,6 +24,7 @@ import {
   getAllUsers,
   getUserApi,
 } from "../api/authentication";
+import { enqueueSnackbar } from "notistack";
 
 const Navbar = ({ sections }) => {
   const navigate = useNavigate();
@@ -77,8 +78,7 @@ const Navbar = ({ sections }) => {
     const res = await createBlogApi(addPost);
     if (res.data) {
       handleClose();
-      const path = addPost.category.toLowerCase();
-      navigate(`/${path}`);
+      enqueueSnackbar("Successfully blog has been added!", { variant: "success" });
     } else {
       alert(res.response.data.message);
     }
@@ -94,7 +94,7 @@ const Navbar = ({ sections }) => {
       } else {
         alert(res.response.data.message);
       }
-      if (res.data.role === "Administrator") {
+      if (res && res.data &&  res.data.role === "Administrator") {
         let resp = await getAllUsers();
         if (resp.data) {
           setUsers(resp.data);
