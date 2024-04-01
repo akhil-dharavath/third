@@ -46,6 +46,16 @@ const BlogItem = ({
     setOpen(false);
   };
 
+  const [users, setUsers] = useState({});
+  const fetchAllUsers = async () => {
+    const res = await getAllUsers();
+    if (res.data) {
+      setUsers(res.data);
+    } else {
+      alert("You are not Authorized");
+    }
+  };
+
   const [comment, setComment] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,16 +71,6 @@ const BlogItem = ({
     }
   };
 
-  const [users, setUsers] = useState({});
-  const fetchAllUsers = async () => {
-    const res = await getAllUsers();
-    if (res.data) {
-      setUsers(res.data);
-    } else {
-      alert("You are not Authorized");
-    }
-  };
-
   const generateComment = async () => {
     const res = await openaiCommentApi(title, description);
     if (res.data) {
@@ -80,15 +80,15 @@ const BlogItem = ({
     }
   };
 
-  useEffect(() => {
-    fetchAllUsers();
-    // eslint-disable-next-line
-  }, []);
-
   const navigate = useNavigate();
   const handleMoreDetails = () => {
     navigate(`/${_id}`);
   };
+
+  useEffect(() => {
+    fetchAllUsers();
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <>

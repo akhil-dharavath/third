@@ -1,5 +1,35 @@
 import axios from "axios";
 
+const disableUser = async (user) => {
+  const authtoken = localStorage.getItem("token");
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json", authtoken },
+      url: `${process.env.REACT_APP_URL}/auth/disable`,
+      method: "PUT",
+      data: JSON.stringify({ user }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+const enableUser = async (user) => {
+  const authtoken = localStorage.getItem("token");
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json", authtoken },
+      url: `${process.env.REACT_APP_URL}/auth/enable`,
+      method: "PUT",
+      data: JSON.stringify({ user }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 const loginApi = async (data) => {
   try {
     const response = await axios({
@@ -28,20 +58,6 @@ const registerApi = async (data) => {
   }
 };
 
-const getUserApi = async () => {
-  const authtoken = localStorage.getItem("token");
-  try {
-    const response = await axios({
-      headers: { "content-type": "application/json", authtoken },
-      url: `${process.env.REACT_APP_URL}/auth/getuser`,
-      method: "GET",
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
 const getAllUsers = async () => {
   const authtoken = localStorage.getItem("token");
   try {
@@ -56,29 +72,13 @@ const getAllUsers = async () => {
   }
 };
 
-const disableUser = async (user) => {
+const getUserApi = async () => {
   const authtoken = localStorage.getItem("token");
   try {
     const response = await axios({
       headers: { "content-type": "application/json", authtoken },
-      url: `${process.env.REACT_APP_URL}/auth/disable`,
-      method: "PUT",
-      data: JSON.stringify({ user }),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
-const enableUser = async (user) => {
-  const authtoken = localStorage.getItem("token");
-  try {
-    const response = await axios({
-      headers: { "content-type": "application/json", authtoken },
-      url: `${process.env.REACT_APP_URL}/auth/enable`,
-      method: "PUT",
-      data: JSON.stringify({ user }),
+      url: `${process.env.REACT_APP_URL}/auth/getuser`,
+      method: "GET",
     });
     return response;
   } catch (error) {

@@ -36,6 +36,10 @@ const Blogs = ({ search, setSearch }) => {
   const [address, setAddress] = useState({});
   const [topStories, setTopStories] = useState([]);
 
+  // openai
+  const [first, setFirst] = React.useState("");
+  const [second, setSecond] = React.useState([]);
+
   const getBlogs = async () => {
     const res = await getAllBlogsApi();
     if (res.data) {
@@ -93,9 +97,27 @@ const Blogs = ({ search, setSearch }) => {
 
   const [openSecond, setOpenSecond] = React.useState(false);
   const [secondLoading, setSecondLoading] = React.useState(false);
+  const secondSubmit = async (question) => {
+    const res = await getEventApi(question);
+    if (res.data) {
+      setSecond(res.data);
+      setSecondLoading(false);
+      return;
+    } else {
+      setSecondLoading(false);
+      alert(res.response.data.message);
+      return;
+    }
+  };
+  const handleClickOpenSecond = () => {
+    setOpenSecond(true);
+  };
+  const handleCloseSecond = () => {
+    setOpenSecond(false);
+    setSecond([]);
+    setLocate("");
+  };
 
-  const [first, setFirst] = React.useState("");
-  const [second, setSecond] = React.useState([]);
   const [locate, setLocate] = React.useState("");
 
   const handleClickOpenFirst = async () => {
@@ -115,32 +137,9 @@ const Blogs = ({ search, setSearch }) => {
     }
   };
 
-  const secondSubmit = async (question) => {
-    const res = await getEventApi(question);
-    if (res.data) {
-      setSecond(res.data);
-      setSecondLoading(false);
-      return;
-    } else {
-      setSecondLoading(false);
-      alert(res.response.data.message);
-      return;
-    }
-  };
-
-  const handleClickOpenSecond = () => {
-    setOpenSecond(true);
-  };
-
   const handleCloseFirst = () => {
     setOpenFirst(false);
     setFirst("");
-    setLocate("");
-  };
-
-  const handleCloseSecond = () => {
-    setOpenSecond(false);
-    setSecond([]);
     setLocate("");
   };
 

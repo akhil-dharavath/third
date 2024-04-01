@@ -9,10 +9,12 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDetails({ ...details, [name]: value });
   };
+  
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();

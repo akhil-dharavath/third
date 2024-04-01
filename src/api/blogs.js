@@ -1,5 +1,59 @@
 import axios from "axios";
 
+const openaiCommentApi = async (title, description) => {
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json" },
+      url: `${process.env.REACT_APP_URL}/blogs/comment/openai-comment`,
+      method: "POST",
+      data: JSON.stringify({ title, description }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getTopStoriesApi = async (city) => {
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json" },
+      url: `${process.env.REACT_APP_URL}/blogs/stories/${city}`,
+      method: "GET",
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+const suggestApi = async (city, question, temperature, weather) => {
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json" },
+      url: `${process.env.REACT_APP_URL}/blogs/search/event`,
+      method: "POST",
+      data: JSON.stringify({ city, question, temperature, weather }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getEventApi = async (question) => {
+  try {
+    const response = await axios({
+      headers: { "content-type": "application/json" },
+      url: `${process.env.REACT_APP_URL}/blogs/get/event`,
+      method: "POST",
+      data: JSON.stringify({ question }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 const getAllBlogsApi = async () => {
   try {
     const response = await axios({
@@ -62,21 +116,7 @@ const addCommentApi = async (id, comment) => {
       headers: { "content-type": "application/json", authtoken },
       url: `${process.env.REACT_APP_URL}/blogs/${id}`,
       method: "POST",
-      data: JSON.stringify({comment}),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
-const subscribeApi = async (id) => {
-  const authtoken = localStorage.getItem("token");
-  try {
-    const response = await axios({
-      headers: { "content-type": "application/json", authtoken },
-      url: `${process.env.REACT_APP_URL}/blogs/subscribe/${id}`,
-      method: "PUT",
+      data: JSON.stringify({ comment }),
     });
     return response;
   } catch (error) {
@@ -98,53 +138,13 @@ const unSubscribeApi = async (id) => {
   }
 };
 
-const openaiCommentApi = async (title, description) => {
+const subscribeApi = async (id) => {
+  const authtoken = localStorage.getItem("token");
   try {
     const response = await axios({
-      headers: { "content-type": "application/json" },
-      url: `${process.env.REACT_APP_URL}/blogs/comment/openai-comment`,
-      method: "POST",
-      data: JSON.stringify({ title, description }),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
-const getTopStoriesApi = async (city) => {
-  try {
-    const response = await axios({
-      headers: { "content-type": "application/json" },
-      url: `${process.env.REACT_APP_URL}/blogs/stories/${city}`,
-      method: "GET",
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-const suggestApi = async (city, question, temperature, weather) => {
-  try {
-    const response = await axios({
-      headers: { "content-type": "application/json" },
-      url: `${process.env.REACT_APP_URL}/blogs/search/event`,
-      method: "POST",
-      data: JSON.stringify({ city, question, temperature, weather }),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
-const getEventApi = async (question) => {
-  try {
-    const response = await axios({
-      headers: { "content-type": "application/json" },
-      url: `${process.env.REACT_APP_URL}/blogs/get/event`,
-      method: "POST",
-      data: JSON.stringify({ question }),
+      headers: { "content-type": "application/json", authtoken },
+      url: `${process.env.REACT_APP_URL}/blogs/subscribe/${id}`,
+      method: "PUT",
     });
     return response;
   } catch (error) {
@@ -163,5 +163,5 @@ export {
   openaiCommentApi,
   getTopStoriesApi,
   suggestApi,
-  getEventApi
+  getEventApi,
 };

@@ -15,7 +15,37 @@ const Blog = () => {
   const [blog, setBlog] = useState(null);
   const [user, setUser] = useState({});
   const [subscribed, setSubscribed] = useState(null);
+  const navigate = useNavigate();
+  const handleDelete = async () => {
+    const res = await deleteBlogApi(id);
+    if (res.data) {
+      enqueueSnackbar("Successfully blog has been deleted!", {
+        variant: "success",
+      });
+      navigate("/");
+    } else {
+      alert(res.response.data.message);
+    }
+  };
 
+  const handleUnSubscribe = async () => {
+    const res = await unSubscribeApi(id);
+    if (res.data) {
+      setSubscribed(false);
+    } else {
+      alert(res.response.data.message);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    const res = await subscribeApi(id);
+    if (res.data) {
+      setSubscribed(true);
+    } else {
+      alert(res.response.data.message);
+    }
+  };
+  
   const getBlog = async () => {
     const res = await getOneBlogApi(id);
     if (res.data) {
@@ -41,35 +71,6 @@ const Blog = () => {
     getBlog();
     // eslint-disable-next-line
   }, []);
-
-  const navigate = useNavigate();
-  const handleDelete = async () => {
-    const res = await deleteBlogApi(id);
-    if (res.data) {
-      enqueueSnackbar("Successfully blog has been deleted!", { variant: "success" });
-      navigate("/");
-    } else {
-      alert(res.response.data.message);
-    }
-  };
-  
-  const handleSubscribe = async () => {
-    const res = await subscribeApi(id);
-    if (res.data) {
-      setSubscribed(true);
-    } else {
-      alert(res.response.data.message);
-    }
-  };
-
-  const handleUnSubscribe = async () => {
-    const res = await unSubscribeApi(id);
-    if (res.data) {
-      setSubscribed(false);
-    } else {
-      alert(res.response.data.message);
-    }
-  };
 
   return (
     <>

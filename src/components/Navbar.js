@@ -34,6 +34,33 @@ const Navbar = ({ sections }) => {
     window.location.reload();
   };
 
+  const [addPost, setAddPost] = useState({
+    title: "",
+    description: "",
+    cover: "",
+    authorName: "",
+    createdAt: "",
+    category: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAddPost({ ...addPost, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await createBlogApi(addPost);
+    if (res.data) {
+      handleClose();
+      enqueueSnackbar("Successfully blog has been added!", {
+        variant: "success",
+      });
+    } else {
+      alert(res.response.data.message);
+    }
+  };
+
   const [open, setOpen] = useState(false);
   const [show, setShow] = useState(false);
   const theme = useTheme();
@@ -59,31 +86,6 @@ const Navbar = ({ sections }) => {
     });
   };
 
-  const [addPost, setAddPost] = useState({
-    title: "",
-    description: "",
-    cover: "",
-    authorName: "",
-    createdAt: "",
-    category: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAddPost({ ...addPost, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await createBlogApi(addPost);
-    if (res.data) {
-      handleClose();
-      enqueueSnackbar("Successfully blog has been added!", { variant: "success" });
-    } else {
-      alert(res.response.data.message);
-    }
-  };
-
   const [user, setUser] = useState({});
   const [users, setUsers] = useState([]);
   const getUser = async () => {
@@ -94,7 +96,7 @@ const Navbar = ({ sections }) => {
       } else {
         alert(res.response.data.message);
       }
-      if (res && res.data &&  res.data.role === "Administrator") {
+      if (res && res.data && res.data.role === "Administrator") {
         let resp = await getAllUsers();
         if (resp.data) {
           setUsers(resp.data);
